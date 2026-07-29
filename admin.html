@@ -1,49 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="ar">
 <head>
 
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Attendance Admin</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
 
 body{
 
+margin:0;
+padding:30px;
+background:#edf2f7;
 font-family:Poppins,sans-serif;
 
-background:#eef3fb;
+}
 
-margin:0;
+.container{
 
-padding:30px;
+max-width:1100px;
+margin:auto;
 
 }
 
 .card{
 
 background:white;
-
-border-radius:20px;
-
 padding:25px;
-
-max-width:1000px;
-
-margin:auto;
-
-box-shadow:0 10px 30px rgba(0,0,0,.1);
+border-radius:20px;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
 
 }
 
@@ -53,27 +45,28 @@ margin-top:0;
 
 }
 
-input{
+input[type=file]{
 
-margin:20px 0;
+margin-top:20px;
+margin-bottom:20px;
 
 }
 
-.info{
+.stats{
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+grid-template-columns:repeat(3,1fr);
 
-gap:15px;
+gap:20px;
 
-margin-top:20px;
+margin-bottom:25px;
 
 }
 
 .box{
 
-background:#f6f8fc;
+background:#f5f7fb;
 
 padding:20px;
 
@@ -83,13 +76,27 @@ text-align:center;
 
 }
 
+.box h2{
+
+margin:0;
+
+font-size:30px;
+
+color:#1e3a8a;
+
+}
+
+.box p{
+
+margin:10px 0 0;
+
+}
+
 table{
 
 width:100%;
 
 border-collapse:collapse;
-
-margin-top:25px;
 
 }
 
@@ -97,7 +104,9 @@ th,td{
 
 border:1px solid #ddd;
 
-padding:8px;
+padding:10px;
+
+text-align:center;
 
 font-size:14px;
 
@@ -117,17 +126,19 @@ color:white;
 
 <body>
 
+<div class="container">
+
 <div class="card">
 
 <h1>Attendance Admin Dashboard</h1>
 
 <input type="file" id="excelFile" accept=".xlsx,.xls">
 
-<div class="info">
+<div class="stats">
 
 <div class="box">
 
-<h3 id="sheetCount">0</h3>
+<h2 id="sheetCount">0</h2>
 
 <p>Sheets</p>
 
@@ -135,7 +146,7 @@ color:white;
 
 <div class="box">
 
-<h3 id="employeeCount">0</h3>
+<h2 id="employeeCount">0</h2>
 
 <p>Employees</p>
 
@@ -143,7 +154,7 @@ color:white;
 
 <div class="box">
 
-<h3 id="rowCount">0</h3>
+<h2 id="rowCount">0</h2>
 
 <p>Rows</p>
 
@@ -154,8 +165,12 @@ color:white;
 <table id="preview"></table>
 
 </div>
+
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="admin.js?v=2"></script>
+
+<script src="admin.js?v=3"></script>
 
 </body>
 
