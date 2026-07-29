@@ -1,25 +1,60 @@
+alert("ADMIN VERSION 3");
+
 const input = document.getElementById("excelFile");
 
 input.addEventListener("change", function (e) {
 
     const file = e.target.files[0];
+
     if (!file) return;
 
     const reader = new FileReader();
 
-    reader.onload = function (event) {
+    reader.onload = function (evt) {
 
-        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(new Uint8Array(evt.target.result), {
+            type: "array"
+        });
 
-        const workbook = XLSX.read(data, { type: "array" });
+        document.getElementById("sheetCount").innerText = workbook.SheetNames.length;
 
         const sheet = workbook.Sheets["داتا"];
 
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const rows = XLSX.utils.sheet_to_json(sheet, {
+            header: 1
+        });
 
-        alert("عدد الصفوف = " + rows.length);
+        document.getElementById("employeeCount").innerText = rows.length;
 
-        console.log(rows);
+        document.getElementById("rowCount").innerText = rows.length;
+
+        const table = document.getElementById("preview");
+
+        table.innerHTML = "";
+
+        rows.slice(0,10).forEach((row,index)=>{
+
+            let tr="<tr>";
+
+            row.forEach(col=>{
+
+                if(index==0){
+
+                    tr+="<th>"+col+"</th>";
+
+                }else{
+
+                    tr+="<td>"+col+"</td>";
+
+                }
+
+            });
+
+            tr+="</tr>";
+
+            table.innerHTML+=tr;
+
+        });
 
     };
 
