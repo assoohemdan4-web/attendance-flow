@@ -1,5 +1,3 @@
-alert("ADMIN VERSION 3");
-
 const input = document.getElementById("excelFile");
 
 input.addEventListener("change", function (e) {
@@ -12,52 +10,65 @@ input.addEventListener("change", function (e) {
 
     reader.onload = function (evt) {
 
-        const workbook = XLSX.read(new Uint8Array(evt.target.result), {
-            type: "array"
-        });
+        const workbook = XLSX.read(evt.target.result, { type: "binary" });
 
-        document.getElementById("sheetCount").innerText = workbook.SheetNames.length;
+        document.getElementById("sheetCount").innerText =
+            workbook.SheetNames.length;
+
+        // ===== قراءة شيت داتا =====
 
         const sheet = workbook.Sheets["داتا"];
 
-        const rows = XLSX.utils.sheet_to_json(sheet, {
-            header: 1
-        });
+        const employees = XLSX.utils.sheet_to_json(sheet);
 
-        document.getElementById("employeeCount").innerText = rows.length;
+        document.getElementById("employeeCount").innerText =
+            employees.length;
 
-        document.getElementById("rowCount").innerText = rows.length;
+        document.getElementById("rowCount").innerText =
+            employees.length;
 
         const table = document.getElementById("preview");
 
         table.innerHTML = "";
 
-        rows.slice(0,10).forEach((row,index)=>{
+        if (employees.length === 0) {
 
-            let tr="<tr>";
+            table.innerHTML = "<tr><td>لا توجد بيانات</td></tr>";
 
-            row.forEach(col=>{
+            return;
 
-                if(index==0){
+        }
 
-                    tr+="<th>"+col+"</th>";
+        const headers = Object.keys(employees[0]);
 
-                }else{
+        let html = "<tr>";
 
-                    tr+="<td>"+col+"</td>";
+        headers.forEach(h => {
 
-                }
-
-            });
-
-            tr+="</tr>";
-
-            table.innerHTML+=tr;
+            html += `<th>${h}</th>`;
 
         });
 
+        html += "</tr>";
+
+        employees.slice(0,10).forEach(emp=>{
+
+            html+="<tr>";
+
+            headers.forEach(h=>{
+
+                html+=`<td>${emp[h] ?? ""}</td>`;
+
+            });
+
+            html+="</tr>";
+
+        });
+
+        table.innerHTML = html;
+
     };
 
-    reader.readAsArrayBuffer(file);
+    reader.readAsBinaryString(file);
 
 });
