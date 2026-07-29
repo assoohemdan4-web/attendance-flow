@@ -1,10 +1,10 @@
 function searchEmployee() {
-    let code = document.getElementById("empCode").value;
+    let code = document.getElementById("empCode").value.trim();
 
-    if (code == "") {
+    if (code === "") {
         alert("Please enter employee code");
         return;
     }
 
-    alert("Employee Code : " + code);
+    window.location.href = "report.html?code=" + encodeURIComponent(code);
 }
