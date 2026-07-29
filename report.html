@@ -1,18 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Attendance Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f3f6fb;
+      color: #1f2937;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 20px;
+    }
+    .header {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: #fff;
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .title {
+      font-size: 30px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+    .subtitle {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 14px;
+    }
+    .meta {
+      display: grid;
+      gap: 8px;
+      text-align: right;
+      font-size: 14px;
+    }
+    .meta strong {
+      display: inline-block;
+      min-width: 120px;
+    }
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .kpi {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e5e7eb;
+    }
+    .kpi .label {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    .kpi .value {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .section {
+      margin-top: 18px;
+      background: #fff;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e5e7eb;
+    }
+    .section h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 12px 10px;
+      text-align: center;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 600;
+    }
+    tr:hover td {
+      background: #f9fafb;
+    }
+    .present { color: #16a34a; font-weight: 600; }
+    .absent { color: #dc2626; font-weight: 600; }
+    .late { color: #f59e0b; font-weight: 600; }
+    .footer {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+      color: #64748b;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    @media print {
+      body { background: #fff; }
+      .page { margin: 0; max-width: none; padding: 0; }
+      .header, .section, .kpi { box-shadow: none; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Attendance Report</h1>
-  <p id="codeText"></p>
+  <div class="page">
+    <div class="header">
+      <div class="header-top">
+        <div>
+          <h1 class="title">Monthly Attendance Report</h1>
+          <p class="subtitle">Professional attendance summary for site employees</p>
+        </div>
+        <div class="meta">
+          <div><strong>Employee Code:</strong> <span id="empCode">-</span></div>
+          <div><strong>Month:</strong> June 2026</div>
+          <div><strong>Generated:</strong> <span id="generatedDate"></span></div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="label">Days Present</div>
+          <div class="value">23</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Absent Days</div>
+          <div class="value">3</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Late Days</div>
+          <div class="value">2</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Total Hours</div>
+          <div class="value">199:40</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Overtime</div>
+          <div class="value">12:15</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Daily Attendance Details</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Hours</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>01/06/2026</td>
+            <td>07:54 AM</td>
+            <td>05:06 PM</td>
+            <td>09:12</td>
+            <td class="present">Present</td>
+          </tr>
+          <tr>
+            <td>02/06/2026</td>
+            <td>07:59 AM</td>
+            <td>05:01 PM</td>
+            <td>09:02</td>
+            <td class="present">Present</td>
+          </tr>
+          <tr>
+            <td>03/06/2026</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td class="absent">Absent</td>
+          </tr>
+          <tr>
+            <td>04/06/2026</td>
+            <td>08:05 AM</td>
+            <td>05:18 PM</td>
+            <td>09:13</td>
+            <td class="late">Late</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <div><span class="badge">Auto Generated Report</span></div>
+      <div>Prepared for employee attendance review</div>
+    </div>
+  </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    document.getElementById("codeText").textContent = "Employee Code: " + code;
+    const code = params.get("code") || "-";
+    document.getElementById("empCode").textContent = code;
+    document.getElementById("generatedDate").textContent = new Date().toLocaleString();
   </script>
 </body>
 </html>
