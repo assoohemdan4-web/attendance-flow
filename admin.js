@@ -17,7 +17,7 @@ input.addEventListener("change", function (e) {
         document.getElementById("sheetCount").innerText =
             workbook.SheetNames.length;
 
-        const sheet = workbook.Sheets["داتا"];
+        const sheet = workbook.Sheets["السحب"];
 
         // قراءة كل الصفوف كما هي
         const rows = XLSX.utils.sheet_to_json(sheet, {
