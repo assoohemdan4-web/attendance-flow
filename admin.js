@@ -1,80 +1,137 @@
+// ===============================
+// Convert Excel Date & Time
+// ===============================
+
 function splitDateTime(value) {
 
+
     if (!value) {
+
         return {
             date: "",
             time: ""
         };
+
     }
 
 
-    // لو القيمة جاية كنص
+
+    // Excel date converted to JS Date
+
+    if (value instanceof Date) {
+
+
+        const day = String(value.getDate()).padStart(2, "0");
+
+        const month = String(value.getMonth() + 1).padStart(2, "0");
+
+        const year = value.getFullYear();
+
+
+        const hour = String(value.getHours()).padStart(2, "0");
+
+        const minute = String(value.getMinutes()).padStart(2, "0");
+
+
+
+        return {
+
+            date: `${day}/${month}/${year}`,
+
+            time: `${hour}:${minute}`
+
+        };
+
+
+    }
+
+
+
+    // لو التاريخ نص
+
     if (typeof value === "string") {
 
+
         const parts = value.split(" ");
+
 
         return {
 
             date: parts[0] || "",
 
-            time: parts[1] ? parts[1].substring(0, 5) : ""
+            time: parts[1] ? parts[1].substring(0,5) : ""
 
         };
+
 
     }
 
 
-    // لو القيمة جاية من Excel كرقم
-    const d = XLSX.SSF.parse_date_code(value);
+
+    // لو Excel رقم Serial
+
+    if (typeof value === "number") {
 
 
-    if (!d) {
+        const d = XLSX.SSF.parse_date_code(value);
+
+
+        if (!d) {
+
+            return {
+                date:"",
+                time:""
+            };
+
+        }
+
+
 
         return {
 
-            date: "",
-            time: ""
+            date:
+            `${String(d.d).padStart(2,"0")}/${String(d.m).padStart(2,"0")}/${d.y}`,
+
+            time:
+            `${String(d.H).padStart(2,"0")}:${String(d.M).padStart(2,"0")}`
 
         };
 
+
     }
 
-
-    const day = String(d.d).padStart(2, "0");
-    const month = String(d.m).padStart(2, "0");
-    const year = d.y;
-
-
-    const hour = String(d.H).padStart(2, "0");
-    const minute = String(d.M).padStart(2, "0");
 
 
     return {
 
-        date: `${day}/${month}/${year}`,
+        date:"",
 
-        time: `${hour}:${minute}`
+        time:""
 
     };
+
 
 }
 
 
 
 // ===============================
-// قراءة ملف Excel
+// Upload Excel
 // ===============================
+
 
 const input = document.getElementById("excelFile");
 
 
-input.addEventListener("change", function (e) {
+
+input.addEventListener("change", function(e){
+
 
 
     const file = e.target.files[0];
 
 
-    if (!file) return;
+    if(!file) return;
 
 
 
@@ -82,12 +139,17 @@ input.addEventListener("change", function (e) {
 
 
 
-    reader.onload = function (evt) {
+    reader.onload = function(evt){
+
 
 
         const workbook = XLSX.read(evt.target.result, {
 
-            type: "binary"
+
+            type:"binary",
+
+            cellDates:true
+
 
         });
 
@@ -98,100 +160,148 @@ input.addEventListener("change", function (e) {
 
 
 
-        // اختيار شيت السحب
+
         const sheet = workbook.Sheets["السحب"];
 
 
 
-        if (!sheet) {
+        if(!sheet){
 
-            console.log("Sheet السحب غير موجود");
+
+            alert("لم يتم العثور على شيت السحب");
 
             return;
+
 
         }
 
 
 
-        // قراءة البيانات
-        const rows = XLSX.utils.sheet_to_json(sheet, {
 
-            header: 1,
+        let rows = XLSX.utils.sheet_to_json(sheet, {
 
-            defval: ""
+
+            header:1,
+
+            defval:"",
+
+            raw:true
+
 
         });
 
 
 
+
+
+        // حذف الصف الفارغ الأول
+
+        if(rows[0].every(cell => cell === "")){
+
+
+            rows.shift();
+
+
+        }
+
+
+
+
+
+        const headers = rows[0];
+
+
+
+
+
         document.getElementById("employeeCount").innerText =
-            rows.length;
+            rows.length - 1;
 
 
 
         document.getElementById("rowCount").innerText =
-            rows.length;
+            rows.length - 1;
+
+
 
 
 
         const table = document.getElementById("preview");
 
 
-        table.innerHTML = "";
+        table.innerHTML="";
 
 
 
-        rows.slice(0, 10).forEach((row, index) => {
 
 
-            let tr = "<tr>";
-
-
-
-            row.forEach((cell, colIndex) => {
+        rows.slice(0,11).forEach((row,index)=>{
 
 
 
-                if (index === 0) {
+            let tr="<tr>";
+
+
+
+
+
+            row.forEach((cell,colIndex)=>{
+
+
+
+
+
+                // Header
+
+                if(index===0){
 
 
                     tr += `<th>${cell}</th>`;
 
 
-                } 
+                }
 
-                else {
+
+
+                else{
+
 
 
                     let value = cell;
 
 
-                    const header = rows[0][colIndex];
+
+                    const header = headers[colIndex];
 
 
 
-                    // معالجة عمود التاريخ والوقت فقط
-                    if (header === "Date/Time") {
+
+
+                    if(header === "Date/Time"){
+
 
 
                         const dt = splitDateTime(value);
 
 
 
+
                         value = `
 
-                            <div>
-                                <b>${dt.date}</b>
-                            </div>
+                        <div>
+                            <b>${dt.date}</b>
+                        </div>
 
-                            <div style="color:#2563eb">
-                                ${dt.time}
-                            </div>
+                        <div style="color:#2563eb">
+                            ${dt.time}
+                        </div>
 
                         `;
 
 
                     }
+
+
 
 
 
@@ -201,16 +311,27 @@ input.addEventListener("change", function (e) {
                 }
 
 
+
+
             });
 
 
 
-            tr += "</tr>";
+
+
+            tr+="</tr>";
+
+
 
             table.innerHTML += tr;
 
 
+
+
         });
+
+
+
 
 
 
@@ -219,6 +340,7 @@ input.addEventListener("change", function (e) {
 
 
     };
+
 
 
 
