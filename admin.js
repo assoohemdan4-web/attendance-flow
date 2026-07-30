@@ -1,3 +1,56 @@
+function splitDateTime(value) {
+
+    if (!value) {
+        return {
+            date: "",
+            time: ""
+        };
+    }
+
+    // لو القيمة جاية كنص
+    if (typeof value === "string") {
+
+        const parts = value.split(" ");
+
+        return {
+
+            date: parts[0] || "",
+
+            time: parts[1] ? parts[1].substring(0,5) : ""
+
+        };
+
+    }
+
+    // لو القيمة جاية كرقم Excel
+    const d = XLSX.SSF.parse_date_code(value);
+
+    if (!d) {
+
+        return {
+
+            date:"",
+            time:""
+
+        };
+
+    }
+
+    const day = String(d.d).padStart(2,"0");
+    const month = String(d.m).padStart(2,"0");
+    const year = d.y;
+
+    const hour = String(d.H).padStart(2,"0");
+    const minute = String(d.M).padStart(2,"0");
+
+    return{
+
+        date:`${day}/${month}/${year}`,
+        time:`${hour}:${minute}`
+
+    };
+
+}
 // ===============================
 // Excel Date & Time Formatter
 // ===============================
@@ -117,7 +170,18 @@ alert("تم فتح شيت السحب");
 
         }
 
-        tr += `<td>${value}</td>`;
+        if (header === "Date/Time") {
+
+    const dt = splitDateTime(value);
+
+    value = `
+        <div><b>${dt.date}</b></div>
+        <div style="color:#2563eb">${dt.time}</div>
+    `;
+
+}
+
+tr += `<td>${value}</td>`;
 
     }
 
