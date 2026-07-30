@@ -1,4 +1,4 @@
-function splitDateTime(value) {
+function splitDateTime(cell) {
 
     if (!value) {
         return {
@@ -122,7 +122,6 @@ input.addEventListener("change", function (e) {
 
     const sheet = workbook.Sheets["السحب"];
 
-alert("تم فتح شيت السحب");
 
         // قراءة كل الصفوف كما هي
         const rows = XLSX.utils.sheet_to_json(sheet, {
@@ -151,24 +150,7 @@ alert("تم فتح شيت السحب");
         let value = cell;
 
         const header = rows[0][colIndex];
-
-        if (header === "Date") {
-
-            value = formatDate(cell);
-
-        }
-
-        else if (header === "Time") {
-
-            value = formatTime(cell);
-
-        }
-
-        else if (header === "Date/Time") {
-
-            value = formatDateTime(cell);
-
-        }
+        
 
         if (header === "Date/Time") {
 
