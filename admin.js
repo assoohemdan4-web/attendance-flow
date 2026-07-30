@@ -1,14 +1,18 @@
-/* ==========================================
-   admin.js
-==========================================*/
-
 "use strict";
+
+console.log("✅ admin.js Loaded");
 
 const input = document.getElementById("excelFile");
 
-input.addEventListener("change", loadExcelFile);
+if (!input) {
+    console.error("❌ excelFile input not found");
+} else {
+    input.addEventListener("change", loadExcelFile);
+}
 
 function loadExcelFile(event) {
+
+    console.log("📁 File Selected");
 
     const file = event.target.files[0];
 
@@ -20,16 +24,15 @@ function loadExcelFile(event) {
 
         try {
 
-            // قراءة ملف Excel
             const workbook = XLSX.read(e.target.result, {
                 type: "binary"
             });
 
-            // عدد الشيتات
+            console.log(workbook);
+
             document.getElementById("sheetCount").textContent =
                 workbook.SheetNames.length;
 
-            // البحث عن شيت السحب
             const sheet = workbook.Sheets["السحب"];
 
             if (!sheet) {
@@ -40,29 +43,23 @@ function loadExcelFile(event) {
 
             }
 
-            // قراءة البيانات
             attendanceData = parseAttendanceSheet(sheet);
 
-            // تحديث الإحصائيات
             document.getElementById("employeeCount").textContent =
                 getEmployeesCount();
 
             document.getElementById("rowCount").textContent =
                 getRecordsCount();
 
-            // Console للتأكد
-            console.log("========== Attendance Data ==========");
             console.log(attendanceData);
 
             alert("✅ تم تحميل الملف بنجاح");
 
-        }
+        } catch (err) {
 
-        catch (error) {
+            console.error(err);
 
-            console.error(error);
-
-            alert("❌ حدث خطأ أثناء قراءة الملف");
+            alert("❌ " + err.message);
 
         }
 
