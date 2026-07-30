@@ -10,62 +10,48 @@ input.addEventListener("change", function (e) {
 
     reader.onload = function (evt) {
 
-        const workbook = XLSX.read(evt.target.result, { type: "binary" });
+        const workbook = XLSX.read(evt.target.result, {
+            type: "binary"
+        });
 
         document.getElementById("sheetCount").innerText =
             workbook.SheetNames.length;
 
-        // ===== قراءة شيت داتا =====
-
         const sheet = workbook.Sheets["داتا"];
 
-        const employees = XLSX.utils.sheet_to_json(sheet);
-
-        document.getElementById("employeeCount").innerText =
-            employees.length;
-
-        document.getElementById("rowCount").innerText =
-            employees.length;
-
-        const table = document.getElementById("preview");
-
-        table.innerHTML = "";
-
-        if (employees.length === 0) {
-
-            table.innerHTML = "<tr><td>لا توجد بيانات</td></tr>";
-
-            return;
-
-        }
-
-        const headers = Object.keys(employees[0]);
-
-        let html = "<tr>";
-
-        headers.forEach(h => {
-
-            html += `<th>${h}</th>`;
-
+        // قراءة كل الصفوف كما هي
+        const rows = XLSX.utils.sheet_to_json(sheet, {
+            header: 1,
+            defval: ""
         });
 
-        html += "</tr>";
+        document.getElementById("employeeCount").innerText = rows.length;
+        document.getElementById("rowCount").innerText = rows.length;
 
-        employees.slice(0,10).forEach(emp=>{
+        const table = document.getElementById("preview");
+        table.innerHTML = "";
 
-            html+="<tr>";
+        rows.slice(0, 10).forEach((row, index) => {
 
-            headers.forEach(h=>{
+            let tr = "<tr>";
 
-                html+=`<td>${emp[h] ?? ""}</td>`;
+            row.forEach(cell => {
+
+                if (index === 0) {
+                    tr += `<th>${cell}</th>`;
+                } else {
+                    tr += `<td>${cell}</td>`;
+                }
 
             });
 
-            html+="</tr>";
+            tr += "</tr>";
+
+            table.innerHTML += tr;
 
         });
 
-        table.innerHTML = html;
+        console.log(rows);
 
     };
 
